@@ -20,7 +20,8 @@ export const IsModerator = (
 
   if (!user) return next(res.sendStatus(401));
 
-  if (user.role !== UserRole.MODERATOR) return next(res.sendStatus(403));
+  if (user.role !== UserRole.MODERATOR && user.role !== UserRole.ADMIN)
+    return next(res.sendStatus(403));
 
   return next();
 };

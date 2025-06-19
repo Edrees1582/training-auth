@@ -11,7 +11,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     const user: User = { name, email, role, password };
 
-    const userExists = getUserByEmail(email);
+    const userExists = await getUserByEmail(email);
 
     if (userExists) {
       return next(res.status(400).json({ message: 'User already exists' }));
@@ -20,7 +20,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
 
-    addUser(user);
+    await addUser(user);
 
     return next(res.status(201).json({ message: 'User registered successfully' }));
   } catch (error) {
@@ -38,7 +38,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       return next(res.status(400).json({ message: 'Invalid email' }));
     }
 
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     if (!user) {
       return next(res.status(401).json({ message: 'Invalid credentials' }));
@@ -62,7 +62,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   try {
     const { email } = req['user'] as User;
 
-    const user = getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     delete user.password;
 
