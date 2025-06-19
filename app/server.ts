@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 
-import adminRoutes from './app/routes/admin.js';
-import authenticationRoutes from './app/routes/authentication.js';
+import adminRoutes from './routes/admin.js';
+import authenticationRoutes from './routes/authentication.js';
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3000;

@@ -1,8 +1,8 @@
-import express from 'express';
+import { Router } from 'express';
 import { AuthenticateToken } from '../middlewares/authentication.js';
 import { IsModerator } from '../middlewares/authorization.js';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.get('/', AuthenticateToken, IsModerator, (req, res) => {
     res.send('MODERATOR ONLY ROUTE');

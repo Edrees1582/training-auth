@@ -1,8 +1,12 @@
 import jwt from 'jsonwebtoken';
+import { UserRole } from '../models/User.js';
 
-export const generateToken = (payload) => {
+export const generateToken = (payload: {
+  email: string;
+  role: UserRole;
+}): string => {
   try {
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    const token: string = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
@@ -12,7 +16,7 @@ export const generateToken = (payload) => {
   }
 };
 
-export const verifyToken = (token) => {
+export const verifyToken = (token: string): any => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

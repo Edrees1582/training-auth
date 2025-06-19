@@ -1,10 +1,10 @@
-import express from 'express';
+import { Request, Response, Router, } from 'express';
 import { AuthenticateToken } from '../middlewares/authentication.js';
 import { IsAdmin } from '../middlewares/authorization.js';
 
-const router = express.Router();
+const router: Router = Router();
 
-router.get('/', AuthenticateToken, IsAdmin, (req, res) => {
+router.get('/', AuthenticateToken, IsAdmin, (req: Request, res: Response) => {
     res.send('ADMIN ONLY ROUTE');
 });
 
