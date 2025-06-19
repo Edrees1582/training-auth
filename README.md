@@ -10,6 +10,7 @@ A TypeScript-based Node.js REST API with user authentication, authorization, and
 - **Password Encryption**: Secure password hashing using bcrypt
 - **Advanced Input Validation**: Comprehensive validation using express-validator
 - **TypeScript Support**: Full type safety and better development experience
+- **Database Integration**: SQLite database with Sequelize ORM
 - **Protected Routes**: Role-specific route protection
 - **User Profile Management**: Get user profile information
 - **Strong Password Requirements**: Enforced password strength validation
@@ -22,6 +23,8 @@ A TypeScript-based Node.js REST API with user authentication, authorization, and
 - **JWT** - JSON Web Tokens for authentication
 - **bcrypt** - Password hashing
 - **express-validator** - Input validation and sanitization
+- **Sequelize** - SQL ORM for database management
+- **SQLite** - Lightweight database
 - **dotenv** - Environment variable management
 - **nodemon** - Development server with auto-reload
 
@@ -33,13 +36,14 @@ task-1/
 │   ├── controllers/
 │   │   └── authentication.ts      # Authentication logic
 │   ├── database/
-│   │   └── users.ts               # User data management
+│   │   ├── db.ts                  # Database connection setup
+│   │   └── users.ts               # User data operations
 │   ├── middlewares/
 │   │   ├── authentication.ts      # JWT token verification
 │   │   ├── authorization.ts       # Role-based access control
 │   │   └── validation.middleware.ts # Validation middleware
 │   ├── models/
-│   │   └── User.ts                # User interface and role enum
+│   │   └── User.ts                # User model and interface
 │   ├── routes/
 │   │   ├── admin.ts               # Admin-only routes
 │   │   ├── authentication.ts      # Auth routes (login, register, profile)
@@ -204,6 +208,27 @@ The system supports the following user roles (enum values):
 - **Name Validation**: Minimum 3 characters
 - **Role Validation**: Must be valid enum value
 
+## 🗄️ Database
+
+### SQLite with Sequelize
+The application uses SQLite as the database with Sequelize ORM for:
+- **User Management**: Store user credentials and roles
+- **Data Persistence**: Persistent user data across server restarts
+- **Type Safety**: TypeScript integration with Sequelize models
+
+### Database Schema
+```sql
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role INTEGER NOT NULL,
+  createdAt DATETIME,
+  updatedAt DATETIME
+);
+```
+
 ## 🧪 Testing the API
 
 You can test the API using tools like:
@@ -253,12 +278,13 @@ The project uses TypeScript with the following key configurations:
 
 ## 📝 Notes
 
-- The current implementation uses in-memory storage for users
+- The application now uses SQLite database for persistent data storage
 - JWT tokens should be stored securely on the client side
 - Consider implementing refresh tokens for production use
 - Add proper error handling and logging for production deployment
 - TypeScript provides compile-time type checking for better code quality
 - Validation errors are returned in a structured format for better error handling
+- Database file is stored locally and will be created automatically on first run
 
 ## 🤝 Contributing
 
