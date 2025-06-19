@@ -1,6 +1,6 @@
 # Task-1: Authentication & Authorization API
 
-A Node.js REST API with user authentication, authorization, and role-based access control (RBAC) system.
+A TypeScript-based Node.js REST API with user authentication, authorization, and role-based access control (RBAC) system.
 
 ## 🚀 Features
 
@@ -8,16 +8,20 @@ A Node.js REST API with user authentication, authorization, and role-based acces
 - **JWT Token-based Authentication**: Secure token-based authentication
 - **Role-based Authorization**: Support for different user roles (Admin, Moderator, User)
 - **Password Encryption**: Secure password hashing using bcrypt
-- **Input Validation**: Email and required field validation
+- **Advanced Input Validation**: Comprehensive validation using express-validator
+- **TypeScript Support**: Full type safety and better development experience
 - **Protected Routes**: Role-specific route protection
 - **User Profile Management**: Get user profile information
+- **Strong Password Requirements**: Enforced password strength validation
 
 ## 🛠️ Tech Stack
 
 - **Node.js** (>=22.15.1)
+- **TypeScript** - Type-safe JavaScript
 - **Express.js** - Web framework
 - **JWT** - JSON Web Tokens for authentication
 - **bcrypt** - Password hashing
+- **express-validator** - Input validation and sanitization
 - **dotenv** - Environment variable management
 - **nodemon** - Development server with auto-reload
 
@@ -27,23 +31,29 @@ A Node.js REST API with user authentication, authorization, and role-based acces
 task-1/
 ├── app/
 │   ├── controllers/
-│   │   └── authentication.js    # Authentication logic
+│   │   └── authentication.ts      # Authentication logic
 │   ├── database/
-│   │   └── users.js             # User data management
+│   │   └── users.ts               # User data management
 │   ├── middlewares/
-│   │   ├── authentication.js    # JWT token verification
-│   │   └── authorization.js     # Role-based access control
+│   │   ├── authentication.ts      # JWT token verification
+│   │   ├── authorization.ts       # Role-based access control
+│   │   └── validation.middleware.ts # Validation middleware
+│   ├── models/
+│   │   └── User.ts                # User interface and role enum
 │   ├── routes/
-│   │   ├── admin.js             # Admin-only routes
-│   │   ├── authentication.js    # Auth routes (login, register, profile)
-│   │   └── moderator.js         # Moderator-only routes
-│   └── utils/
-│       ├── encryption.js        # Password hashing utilities
-│       ├── jwt.js               # JWT token generation
-│       └── validators.js        # Input validation utilities
-├── server.js                    # Main server file
-├── package.json                 # Project dependencies
-└── README.md                    # This file
+│   │   ├── admin.ts               # Admin-only routes
+│   │   ├── authentication.ts      # Auth routes (login, register, profile)
+│   │   └── moderator.ts           # Moderator-only routes
+│   ├── utils/
+│   │   ├── encryption.ts          # Password hashing utilities
+│   │   └── jwt.ts                 # JWT token generation
+│   ├── validators/
+│   │   └── authentication.ts      # Input validation schemas
+│   └── server.ts                  # Main server file
+├── dist/                          # Compiled JavaScript output
+├── tsconfig.json                  # TypeScript configuration
+├── package.json                   # Project dependencies
+└── README.md                      # This file
 ```
 
 ## 🚀 Getting Started
@@ -73,8 +83,12 @@ task-1/
    JWT_SECRET=your_jwt_secret_key_here
    ```
 
-4. **Start the server**
+4. **Build and Start the server**
    ```bash
+   # Build TypeScript to JavaScript
+   npm run watch
+   
+   # In another terminal, start the server
    npm start
    ```
 
@@ -91,16 +105,21 @@ http://localhost:3000/api
 
 #### 1. Register User
 - **POST** `/auth/register`
-- **Description**: Register a new user
+- **Description**: Register a new user with validation
 - **Body**:
   ```json
   {
     "name": "John Doe",
     "email": "john@example.com",
-    "password": "password123",
-    "role": "user"
+    "password": "StrongPass123!",
+    "role": 2
   }
   ```
+- **Validation Rules**:
+  - Name: Minimum 3 characters
+  - Email: Valid email format
+  - Password: Strong password (8+ chars, uppercase, lowercase, number, special char)
+  - Role: Must be 0 (Admin), 1 (Moderator), or 2 (User)
 - **Response**:
   ```json
   {
@@ -115,7 +134,7 @@ http://localhost:3000/api
   ```json
   {
     "email": "john@example.com",
-    "password": "password123"
+    "password": "StrongPass123!"
   }
   ```
 - **Response**:
@@ -135,7 +154,7 @@ http://localhost:3000/api
     "user": {
       "name": "John Doe",
       "email": "john@example.com",
-      "role": "user"
+      "role": 2
     }
   }
   ```
@@ -146,13 +165,13 @@ http://localhost:3000/api
 - **GET** `/admin`
 - **Description**: Admin-only endpoint
 - **Headers**: `Authorization: Bearer <jwt_token>`
-- **Required Role**: Admin
+- **Required Role**: Admin (0)
 
 #### Moderator Routes
 - **GET** `/moderator`
 - **Description**: Moderator-only endpoint
 - **Headers**: `Authorization: Bearer <jwt_token>`
-- **Required Role**: Moderator
+- **Required Role**: Moderator (1)
 
 ## 🔐 Authentication & Authorization
 
@@ -163,22 +182,33 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 ### User Roles
-The system supports the following user roles:
-- **User**: Basic authenticated user
-- **Moderator**: Elevated privileges
-- **Admin**: Full system access
+The system supports the following user roles (enum values):
+- **Admin (0)**: Full system access
+- **Moderator (1)**: Elevated privileges
+- **User (2)**: Basic authenticated user
 
 ### Middleware
 - **AuthenticateToken**: Verifies JWT token validity
 - **IsAdmin**: Checks if user has admin role
 - **IsModerator**: Checks if user has moderator role
+- **Validation Middleware**: Handles express-validator results
+
+### Validation Features
+- **Email Validation**: Ensures valid email format
+- **Password Strength**: Requires strong passwords with:
+  - Minimum 8 characters
+  - At least one uppercase letter
+  - At least one lowercase letter
+  - At least one number
+  - At least one special character
+- **Name Validation**: Minimum 3 characters
+- **Role Validation**: Must be valid enum value
 
 ## 🧪 Testing the API
 
 You can test the API using tools like:
 - **Postman**
 - **cURL**
-- **Thunder Client** (VS Code extension)
 
 ### Example cURL Commands
 
@@ -186,14 +216,14 @@ You can test the API using tools like:
    ```bash
    curl -X POST http://localhost:3000/api/auth/register \
      -H "Content-Type: application/json" \
-     -d '{"name":"John Doe","email":"john@example.com","password":"password123","role":"user"}'
+     -d '{"name":"John Doe","email":"john@example.com","password":"StrongPass123!","role":2}'
    ```
 
 2. **Login**:
    ```bash
    curl -X POST http://localhost:3000/api/auth/login \
      -H "Content-Type: application/json" \
-     -d '{"email":"john@example.com","password":"password123"}'
+     -d '{"email":"john@example.com","password":"StrongPass123!"}'
    ```
 
 3. **Get profile** (replace `<token>` with actual JWT token):
@@ -205,13 +235,21 @@ You can test the API using tools like:
 ## 🔧 Development
 
 ### Available Scripts
+- `npm run watch` - Watch and compile TypeScript files
 - `npm start` - Start the development server with nodemon
-- `npm test` - Run tests (not implemented yet)
+
+### TypeScript Configuration
+The project uses TypeScript with the following key configurations:
+- **Target**: ES2022
+- **Module**: ESNext
+- **Output Directory**: `./dist`
+- **Root Directory**: `./app`
 
 ### Adding New Routes
-1. Create a new route file in `app/routes/`
+1. Create a new route file in `app/routes/` with `.ts` extension
 2. Import and use the appropriate middleware for authentication/authorization
-3. Add the route to `server.js`
+3. Add validation schemas in `app/validators/` if needed
+4. Add the route to `app/server.ts`
 
 ## 📝 Notes
 
@@ -219,14 +257,17 @@ You can test the API using tools like:
 - JWT tokens should be stored securely on the client side
 - Consider implementing refresh tokens for production use
 - Add proper error handling and logging for production deployment
+- TypeScript provides compile-time type checking for better code quality
+- Validation errors are returned in a structured format for better error handling
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+4. Ensure TypeScript compilation passes
+5. Test thoroughly
+6. Submit a pull request
 
 ## 📄 License
 
