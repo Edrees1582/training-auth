@@ -23,4 +23,4 @@ export const registerValidation = [
   validate,
 ];
 
-export const loginValidation = [emailValidation, passwordValidation, validate];
+export const loginValidation = [emailValidation, validate];

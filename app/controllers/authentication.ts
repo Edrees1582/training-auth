@@ -66,7 +66,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 
     delete user.password;
 
-    return next(res.status(200).json({ user }));
+    return next(res.status(200).json(user));
   } catch (error) {
     return next(res.status(500).json({ message: error.message ?? 'Internal server error' }));
   }
